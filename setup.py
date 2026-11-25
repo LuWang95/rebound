@@ -21,6 +21,13 @@ def is_x86_64():
     if sys.platform == "win32":
         if not shutil.which("clang-cl"):
             return False
+    if sys.platform == "linux":
+        import platform
+        arch = platform.machine().lower()
+        if not ("x86" in arch or "amd64" in arch):
+            return False
+        if "arm" in arch or "aarch" in arch:
+            return False
     return struct.calcsize("P")*8 == 64
 
 ##### Git hash
@@ -28,7 +35,7 @@ try:
     ghash = subprocess.check_output(["git", "rev-parse", "HEAD"]).decode("ascii").strip()
     ghash_arg = f"-DGITHASH={ghash}"
 except Exception:
-    ghash_arg = "-DGITHASH=b0c25d434ff6fd54814efe1fa669738b9e5cc407" #GITHASHAUTOUPDATE
+    ghash_arg = "-DGITHASH=96efa5e98f9540c1e94161fe2ea68bead5d2b320" #GITHASHAUTOUPDATE
 
 ##### Link args
 extra_link_args = []
